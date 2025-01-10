@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generátor obrázků</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Zmenšovač obrázků</h1>
+        <p style="color: red;">Je nutné povolit vyskakovací okno pro stahování - jinak nástroj nebude fungovat.</p>
+        <div class="input-group">
+            <label for="galleryName">Název skupiny fotek</label>
+            <input type="text" id="galleryName" placeholder="Např obrázky z dovolené">
+        </div>
+        <div class="input-group">
+            <label for="maxWidth">Max šířka (px):</label>
+            <input type="number" id="maxWidth" value="2000" min="1">
+        </div>
+        <div class="input-group">
+            <label for="maxHeight">Max výška (px):</label>
+            <input type="number" id="maxHeight" value="2000" min="1">
+        </div>
+        <div class="input-group">
+            <label for="imageUpload">Nahrajte obrázky:</label>
+            <input type="file" id="imageUpload" accept="image/*" multiple>
+        </div>
+        <div id="image-container"></div>
+        <button id="downloadBtn">Stáhnout nové obrázky</button>
+    </div>
+
+    <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
