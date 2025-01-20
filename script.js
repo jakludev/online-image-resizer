@@ -47,28 +47,31 @@ async function loadImageWithPreloader(url, file, maxWidth, maxHeight) {
 }
 
 function resizeImage(img, maxWidth, maxHeight) {
-    const canvas = document.createElement('canvas');
-    let width = img.width;
-    let height = img.height;
+	const canvas = document.createElement("canvas");
+	let width = img.width;
+	let height = img.height;
 
-    if (width > height) {
-        if (width > maxWidth) {
-            height *= maxWidth / width;
-            width = maxWidth;
-        }
-    } else {
-        if (height > maxHeight) {
-            width *= maxHeight / height;
-            height = maxHeight;
-        }
-    }
+	if (width > height) {
+		if (width > maxWidth) {
+			height *= maxWidth / width;
+			width = maxWidth;
+		}
+	} else {
+		if (height > maxHeight) {
+			width *= maxHeight / height;
+			height = maxHeight;
+		}
+	}
 
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, width, height);
-    return canvas.toDataURL(img.type);
+	canvas.width = width;
+	canvas.height = height;
+	const ctx = canvas.getContext("2d");
+	ctx.drawImage(img, 0, 0, width, height);
+
+	// Komprese do JPEG s kvalitou 0.8
+	return canvas.toDataURL("image/jpeg", 0.9);
 }
+
 
 function updateImageContainer() {
     const container = document.getElementById('image-container');
@@ -85,9 +88,10 @@ function updateImageContainer() {
 function downloadGallery() {
     const galleryName = sanitizeFileName(document.getElementById('galleryName').value || 'gallery');
     images.forEach((image, index) => {
+        const originalFileName = sanitizeFileName(image.file.name.replace(/\.[^/.]+$/, ""));
         const extension = image.file.name.split('.').pop().toLowerCase();
         const orderNumber = (index + 1).toString().padStart(3, '0');
-        const fileName = `${galleryName}-${orderNumber}.${extension}`;
+        const fileName = `${galleryName}-${originalFileName}-${orderNumber}.jpg`; // ${extension}
         const link = document.createElement('a');
         link.href = image.dataUrl;
         link.download = fileName;
