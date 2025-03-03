@@ -88,14 +88,16 @@ function updateImageContainer() {
 function downloadGallery() {
     const galleryName = sanitizeFileName(document.getElementById('galleryName').value || 'gallery');
     images.forEach((image, index) => {
-        const originalFileName = sanitizeFileName(image.file.name.replace(/\.[^/.]+$/, ""));
-        const extension = image.file.name.split('.').pop().toLowerCase();
-        const orderNumber = (index + 1).toString().padStart(3, '0');
-        const fileName = `${galleryName}-${originalFileName}-${orderNumber}.jpg`; // ${extension}
-        const link = document.createElement('a');
-        link.href = image.dataUrl;
-        link.download = fileName;
-        link.click();
+        setTimeout(() => {
+            const originalFileName = sanitizeFileName(image.file.name.replace(/\.[^/.]+$/, ""));
+            const extension = image.file.name.split('.').pop().toLowerCase();
+            const orderNumber = (index + 1).toString().padStart(3, '0');
+            const fileName = `${galleryName}-${originalFileName}-${orderNumber}.jpg`; // ${extension}
+            const link = document.createElement('a');
+            link.href = image.dataUrl;
+            link.download = fileName;
+            link.click();
+        }, index * 300); // 500ms delay between each download
     });
 }
 
