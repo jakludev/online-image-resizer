@@ -3,39 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generátor obrázků</title>
+    <title>Image Resizer</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Zmenšovač obrázků</h1>
-        <p style="color: red;">Je nutné povolit vyskakovací okno pro stahování - jinak nástroj nebude fungovat.</p>
-        <div class="input-group">
-            <label for="galleryName">Název skupiny fotek</label>
-            <input type="text" id="galleryName" placeholder="Např obrázky z dovolené">
+        <h1>Image Resizer</h1>
+        <div class="control-panel">
+            <div class="form-group">
+                <label for="imageUpload">Nahrát obrázky:</label>
+                <input type="file" id="imageUpload" accept="image/*" multiple>
+            </div>
+            <div class="form-group">
+                <label for="maxWidth">Maximální šířka:</label>
+                <input type="number" id="maxWidth" value="2000">
+            </div>
+            <div class="form-group">
+                <label for="maxHeight">Maximální výška:</label>
+                <input type="number" id="maxHeight" value="2000">
+            </div>
+            <div class="form-group">
+                <label for="galleryName">Název galerie:</label>
+                <input type="text" id="galleryName" placeholder="gallery">
+            </div>
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="keepOriginalName" checked>
+                    <label for="keepOriginalName">Zachovat původní název souboru</label>
+                </div>
+            </div>
+            <button id="downloadBtn" class="btn">Stáhnout všechny obrázky</button>
         </div>
-        <div class="input-group">
-            <label for="maxWidth">Max šířka (px):</label>
-            <input type="number" id="maxWidth" value="2000" min="1">
+
+        <div id="preloader">
+            <div class="spinner"></div>
+            <p>Načítám...</p>
         </div>
-        <div class="input-group">
-            <label for="maxHeight">Max výška (px):</label>
-            <input type="number" id="maxHeight" value="2000" min="1">
-        </div>
-        <div class="input-group">
-            <label for="imageUpload">Nahrajte obrázky:</label>
-            <input type="file" id="imageUpload" accept="image/*" multiple>
-        </div>
-        <div id="image-container"></div>
-        <p>*Pro změnu pořadí chytni myší obrázek a přetáhni přes jiný - takto se seřadí.</p>
-        <button id="downloadBtn">Stáhnout nové obrázky</button>
+
+        <h2>Nahrané obrázky</h2>
+        <p class="hint">Přetáhněte obrázky pro změnu pořadí</p>
+        <div id="image-container" class="image-container"></div>
     </div>
 
-    <div id="preloader">
-        <div class="spinner"></div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
     <script src="script-2.js"></script>
 </body>
 </html>
