@@ -36,6 +36,7 @@ async function loadImageWithPreloader(url, file, maxWidth, maxHeight) {
         images.push({
             file: file,
             dataUrl: resizedImage,
+            originalImg: img, // Store the original image object for reprocessing
             order: images.length + 1,
             selected: true // Defaultně je každý nahraný obrázek vybraný
         });
@@ -67,10 +68,23 @@ function resizeImage(img, maxWidth, maxHeight) {
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
+
+    // Check for transparent background or selected color
+    const transparentBg = document.getElementById('transparentBgCheckbox').checked;
+    if (!transparentBg) {
+        const bgColor = document.getElementById('bgColorPicker').value;
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
     ctx.drawImage(img, 0, 0, width, height);
 
-    // Komprese do JPEG s kvalitou 0.9
-    return canvas.toDataURL("image/jpeg", 0.9);
+    // Use PNG format when transparency is needed, otherwise JPEG with quality 0.9
+    if (transparentBg) {
+        return canvas.toDataURL("image/png");
+    } else {
+        return canvas.toDataURL("image/jpeg", 0.9);
+    }
 }
 
 // Funkce pro aktualizaci pořadí všech obrázků
@@ -174,12 +188,14 @@ function generateFileName(image, index) {
     const galleryName = sanitizeFileName(document.getElementById('galleryName').value || 'gallery');
     const keepOriginalName = document.getElementById('keepOriginalName').checked;
     const orderNumber = image.order.toString().padStart(3, '0');
+    const transparentBg = document.getElementById('transparentBgCheckbox').checked;
+    const extension = transparentBg ? 'png' : 'jpg';
     
     if (keepOriginalName) {
         const originalFileName = sanitizeFileName(image.file.name.replace(/\.[^/.]+$/, ""));
-        return `${galleryName}-${originalFileName}-${orderNumber}.jpg`;
+        return `${galleryName}-${originalFileName}-${orderNumber}.${extension}`;
     } else {
-        return `${galleryName}-${orderNumber}.jpg`;
+        return `${galleryName}-${orderNumber}.${extension}`;
     }
 }
 
@@ -279,7 +295,60 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Změníme text tlačítka pro stahování
     document.getElementById('downloadBtn').textContent = 'Stáhnout vybrané obrázky';
+
+    // Add event listener to toggle visibility of the color picker
+    const transparentBgCheckbox = document.getElementById('transparentBgCheckbox');
+    const bgColorWrapper = document.getElementById('bgColorWrapper');
+    const bgColorPicker = document.getElementById('bgColorPicker');
+    
+    transparentBgCheckbox.addEventListener('change', function() {
+        bgColorWrapper.style.display = transparentBgCheckbox.checked ? 'none' : 'block';
+        // Reapply settings to all images when transparency changes
+        reprocessAllImages();
+    });
+    
+    // Add event listener for color change
+    bgColorPicker.addEventListener('input', reprocessAllImages);
 });
+
+// Function to reprocess all images with current settings
+function reprocessAllImages() {
+    if (images.length === 0) return;
+    
+    const maxWidth = parseInt(document.getElementById('maxWidth').value);
+    const maxHeight = parseInt(document.getElementById('maxHeight').value);
+    
+    const preloader = document.getElementById('preloader');
+    preloader.style.display = 'flex';
+    
+    // Process each image with current background settings
+    Promise.all(images.map(async (image, index) => {
+        // If we have the original image, use it; otherwise reload it
+        let img;
+        if (image.originalImg) {
+            img = image.originalImg;
+        } else {
+            try {
+                img = await preloadImage(image.dataUrl);
+            } catch (error) {
+                console.error('Error reloading image:', error);
+                return;
+            }
+        }
+        
+        // Apply current settings to the image
+        const resizedImage = resizeImage(img, maxWidth, maxHeight);
+        images[index].dataUrl = resizedImage;
+    }))
+    .then(() => {
+        updateImageContainer();
+        preloader.style.display = 'none';
+    })
+    .catch(error => {
+        console.error('Error reprocessing images:', error);
+        preloader.style.display = 'none';
+    });
+}
 
 // Funkce pro výběr/odznačení všech obrázků
 function selectAllImages() {
