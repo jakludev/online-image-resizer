@@ -3,16 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Resizer</title>
+    <title>Optimalizátor obrázků</title>
+    <!--  no index -->
+    <meta name="robots" content="noindex">
+    <link rel="shortcut icon" href="https://www.devglobe.cz/themes/custom_theme/favicon/favicon.ico">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Image Resizer</h1>
+        <a href="https://www.devglobe.cz/" target="_blank" >
+            <img src="devglobe-cerno-zelene.svg" alt="Devglobe" height="50">
+        </a>
+        <h1>Optimalizátor obrázků</h1>
+        
+        <div class="info-panel">
+            <h2>O aplikaci</h2>
+            <p>Tento nástroj slouží k rychlému zpracování a změně velikosti obrázků pro webové použití. Můžete hromadně nahrát a zpracovat více obrázků najednou.</p>
+            
+            <h3>Co nástroj umí:</h3>
+            <ul>
+                <li>Změnit velikost obrázků podle zadaných maximálních rozměrů</li>
+                <li>Zachovat nebo upravit průhlednost pozadí</li>
+                <li>Přizpůsobit barvu pozadí pro neprůhledné obrázky</li>
+                <li>Hromadně stáhnout zpracované obrázky</li>
+                <li>Změnit pořadí obrázků přetažením</li>
+            </ul>
+            
+            <h3>Jak používat:</h3>
+            <ol>
+                <li>Nahrajte obrázky přetažením do vyznačené oblasti nebo kliknutím pro výběr souborů</li>
+                <li>Nastavte požadované parametry (velikost, název, průhlednost)</li>
+                <li>Uspořádejte obrázky přetažením do požadovaného pořadí</li>
+                <li>Vyberte, které obrázky chcete zpracovat pomocí zaškrtávacích políček</li>
+                <li>Klikněte na "Stáhnout vybrané obrázky" pro uložení</li>
+            </ol>
+<!--             
+            <button class="btn toggle-info" id="hideInfoBtn">Skrýt informace</button> -->
+        </div>
+
         <div class="control-panel">
             <div class="form-group">
                 <label for="imageUpload">Nahrát obrázky:</label>
-                <input type="file" id="imageUpload" accept="image/*" multiple>
+                <div id="drop-zone" class="drop-zone">
+                    <span class="drop-zone-prompt">Přetáhněte sem soubory nebo klikněte pro výběr</span>
+                    <input type="file" id="imageUpload" class="drop-zone-input" accept="image/*" multiple>
+                </div>
             </div>
             <div class="form-group">
                 <label for="maxWidth">Maximální šířka:</label>
@@ -24,7 +59,7 @@
             </div>
             <div class="form-group">
                 <label for="galleryName">Název galerie:</label>
-                <input type="text" id="galleryName" placeholder="gallery">
+                <input type="text" id="galleryName" placeholder="skupina-obrazku-nazev">
             </div>
             <div class="form-group">
                 <div class="checkbox-group">
@@ -35,10 +70,10 @@
             <div class="form-group">
                 <div class="checkbox-group">
                     <input type="checkbox" id="transparentBgCheckbox" >
-                    <label for="transparentBgCheckbox">Průhledné pozadí (obrázek bude mít větší velikost)</label>
+                    <label for="transparentBgCheckbox">Průhledné pozadí (obrázek bude mít větší velikost a formát PNG, jinak JPG)</label>
                 </div>
             </div>
-            <div class="form-group" id="bgColorWrapper" style="display: none;">
+            <div class="form-group" id="bgColorWrapper" >
                 <label for="bgColorPicker">Vyberte barvu pozadí:</label>
                 <input type="color" id="bgColorPicker" value="#ffffff">
             </div>
@@ -55,6 +90,12 @@
         <div id="image-container" class="image-container"></div>
     </div>
 
+    <div style="text-align: center;">
+        <a href="https://www.devglobe.cz/" target="_blank" style="color:white;text-decoration: none;">
+            Powered by Devglobe <span style="color:red">❤</span>
+        </a>
+        
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
     <script src="script-2.js"></script>
 </body>

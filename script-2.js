@@ -3,18 +3,67 @@ let images = [];
 document.getElementById('imageUpload').addEventListener('change', handleImageUpload);
 document.getElementById('downloadBtn').addEventListener('click', downloadGallery);
 
-function handleImageUpload(event) {
-    const files = event.target.files;
+// Add drag and drop event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const dropZone = document.getElementById('drop-zone');
+    
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    // Highlight drop zone when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+    
+    // Handle dropped files
+    dropZone.addEventListener('drop', handleDrop, false);
+});
+
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+function highlight() {
+    document.getElementById('drop-zone').classList.add('highlight');
+}
+
+function unhighlight() {
+    document.getElementById('drop-zone').classList.remove('highlight');
+}
+
+function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    handleFiles(files);
+}
+
+function handleFiles(files) {
     const maxWidth = parseInt(document.getElementById('maxWidth').value);
     const maxHeight = parseInt(document.getElementById('maxHeight').value);
 
     Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            loadImageWithPreloader(e.target.result, file, maxWidth, maxHeight);
+        // Only process image files
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                loadImageWithPreloader(e.target.result, file, maxWidth, maxHeight);
+            }
+            reader.readAsDataURL(file);
         }
-        reader.readAsDataURL(file);
     });
+}
+
+function handleImageUpload(event) {
+    const files = event.target.files;
+    handleFiles(files);
 }
 
 function preloadImage(url) {
@@ -309,6 +358,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add event listener for color change
     bgColorPicker.addEventListener('input', reprocessAllImages);
+
+    // Info panel toggle
+    const hideInfoBtn = document.getElementById('hideInfoBtn');
+    const infoPanel = document.querySelector('.info-panel');
+    
+    // Check if we previously stored the panel state
+    const infoPanelHidden = localStorage.getItem('infoPanelHidden') === 'true';
+    if (infoPanelHidden) {
+        infoPanel.style.display = 'none';
+        hideInfoBtn.textContent = 'Zobrazit informace';
+    }
+    
+    hideInfoBtn.addEventListener('click', function() {
+        if (infoPanel.style.display === 'none') {
+            infoPanel.style.display = 'block';
+            hideInfoBtn.textContent = 'Skrýt informace';
+            localStorage.setItem('infoPanelHidden', 'false');
+        } else {
+            infoPanel.style.display = 'none';
+            hideInfoBtn.textContent = 'Zobrazit informace';
+            localStorage.setItem('infoPanelHidden', 'true');
+        }
+    });
 });
 
 // Function to reprocess all images with current settings
